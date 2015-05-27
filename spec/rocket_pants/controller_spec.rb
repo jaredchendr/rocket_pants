@@ -15,7 +15,7 @@ describe RocketPants::Base do
       instance.should respond_to :authenticate_or_request_with_http_token
     end
 
-    context 'with a model' do
+    context 'with a valid model' do
 
       let(:table_manager) { ReversibleData.manager_for(:users) }
 
@@ -39,6 +39,31 @@ describe RocketPants::Base do
         content[:count].should == 5
       end
 
+      it 'should let you expose a scope' do
+        1.upto(5) do |offset|
+          User.create :age => (18 + offset)
+        end
+        mock(TestController).test_data { User.where('1 = 1') }
+        get :test_data
+        content[:response].should == User.all.map(&:serializable_hash)
+        content[:count].should == 5
+      end
+
+    end
+
+    context 'with a invalid model' do
+      let(:table_manager) { ReversibleData.manager_for(:fish) }
+
+      before(:each) { table_manager.up! }
+      after(:each)  { table_manager.down! }
+
+      it 'should let you expose a invalid ActiveRecord:Base' do
+        fish = Fish.create
+        mock(TestController).test_data { fish }
+        get :test_data
+        content['error'].should == 'invalid_resource'
+        content['messages'].should be_present
+      end
     end
 
   end
@@ -122,7 +147,7 @@ describe RocketPants::Base do
 
     it 'should correctly convert an object with a serializable hash method' do
       object = {:a => 1, :b => 2}
-      stub(object).serializable_hash(anything) { {:serialised => true}}
+      def object.serializable_hash(*); {:serialised => true}; end
       mock(TestController).test_data { object }
       get :test_data
       content[:response].should == {'serialised' => true}
@@ -396,6 +421,17 @@ describe RocketPants::Base do
       get :test_metadata, :metadata => {:awesome => "1"}
       decoded = ActiveSupport::JSON.decode(response.body)
       decoded["awesome"].should == "1"
+    end
+
+  end
+
+  context 'empty responses' do
+
+    it 'correctly returns a blank body' do
+      get :test_head
+      response.status.should == 201
+      response.body.should be_blank
+      response.content_type.should include 'application/json'
     end
 
   end

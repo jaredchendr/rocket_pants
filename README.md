@@ -20,7 +20,7 @@ Why use RocketPants over alternatives like Grape or normal Rails? The reasons we
 6. **[Simple tools to consume RocketPants apis](#example-client-code)** - RocketPants includes the `RocketPants::Client` class which builds upon [APISmith](https://github.com/Sutto/api_smith) to make it easier to build clients e.g. automatically converting paginated responses back.
 7. **[Built-in Header Metadata Support](#header-metadata)** - APIs can easily expose `Link:` headers (it's even partly built-in for paginated data - see below), and request metadata (e.g. Object count, etc.) can easily be embedded in the headers of the response, making useful `HEAD` requests.
 8. **[Out of the Box ActiveRecord mapping](#built-in-activerecord-errors)** - We'll automatically take care of mapping `ActiveRecord::RecordNotFound`, `ActiveRecord::RecordNotSaved` and `ActiveRecord::RecordInvalid` for you, even including validation messages where possible.
-9. **[Support for active_model_serializers](https://github.com/rails-api/active_model_serializers)** - If you want to use ActiveModelSerializers, we'll take care of it. Even better, in your expose call, pass through `:serializer` as expected and we'll automatically take care of invoking it for you.
+9. **[Support for active_model_serializers](https://github.com/rails-api/active_model_serializers)** - If you want to use ActiveModelSerializers, we'll take care of it. Even better, in your expose call, pass through `:serializer` as expected (or `:each_serializer`) and we'll automatically take care of invoking it for you.
 
 ## Examples
 
@@ -43,9 +43,9 @@ class FoodsController < RocketPants::Base
 
   version 1
 
-  # The list of foods is paginated for 5 minutes, the food itself is cached
+  # The list of foods is cached for 5 minutes, the food itself is cached
   # until it's modified (using Efficient Validation)
-  caches :index, :show, :caches_for => 5.minutes
+  caches :index, :show, :cache_for => 5.minutes
 
   def index
     expose Food.paginate(:page => params[:page])
@@ -79,8 +79,8 @@ And then, using this example, hitting `GET http://localhost:3000/1/foods` would 
   }],
   "count": 2,
   "pagination": {
-    "previous": nil,
-    "next":     nil,
+    "previous": null,
+    "next":     null,
     "current":  1,
     "per_page": 10,
     "count":    2,
@@ -578,7 +578,7 @@ class UsersController < RocketPants::Base
 
   # Time based, e.g. collections, will be cached for 5 minutes - whilst singular
   # items e.g. show will use etag-based caching:
-  caches :show, :index, :caches_for => 5.minutes
+  caches :show, :index, :cache_for => 5.minutes
 
   def index
     expose User.all
@@ -658,6 +658,13 @@ Inside the `RSpec.configure do |config|` block.
 - [Moncef Belyamani](https://github.com/monfresh) - README clarification.
 - [Jörg Schiller](https://github.com/joergschiller) - Strong Parameter support, `process` fixes.
 - [Aron Hegyi](https://github.com/ahegyi) - Doc tweaks for `:invalid_resource`.
+- [Manuel Meurer](https://github.com/manuelmeurer) for Doc tweaks.
+- [Travis Pew](https://github.com/travisp) for initial RSpec v3 support.
+- [Brandt Lareau](https://github.com/newdark) for RSpec v3 fixes.
+- [David Pedersen](https://github.com/davidpdrsn) for Rails 4.2 fixes.
+- [Damir Svrtan](https://github.com/DamirSvrtan) for Travis CI fixes.
+- [Michael Chrisco](https://github.com/michaelachrisco) for spelling fixes.
+- [Kevin Jalbert](https://github.com/kevinjalbert) for spelling fixes.
 
 If you're not on this list and thing you should be, let @Sutto know.
 

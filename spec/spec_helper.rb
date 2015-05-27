@@ -1,3 +1,5 @@
+require 'pathname'
+
 ENV["RAILS_ENV"] ||= 'test'
 $LOAD_PATH.unshift Pathname(__FILE__).dirname.dirname.join("lib").to_s
 
@@ -22,4 +24,8 @@ RSpec.configure do |config|
   config.include WebmockResponses
   config.extend  ReversibleData::RSpec2Macros
   config.filter_run_excluding :integration => true
+
+  config.expect_with :rspec do |c|
+    c.syntax = [:should, :expect]
+  end if config.respond_to?(:expect_with)
 end

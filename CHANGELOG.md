@@ -2,6 +2,31 @@
 
 **Please Note**: This change log only covers v1.3 forwards - apologies for anything missing prior to that.
 
+## Version 1.12.1
+
+* Fix for scopes and nested serialization working correctly (change Array check to `#to_ary`, as we should).
+
+## Version 1.12.0
+
+* RSpec 3.0 Differ fixes, Thanks to [newdark](https://github.com/newdark).
+* Fix deprecation warning for `path_parameters` in 4.2, Thanks to [davidpdrsn](https://github.com/davidpdrsn).
+* Travis CI fixes, Thanks to [DamirSvrtan](https://github.com/DamirSvrtan).
+* Support for `:each_serializer`.
+
+## Version 1.11.0
+
+* Support for RSpec >= 3.0
+
+## Version 1.10.0
+
+* Remove .rvmrc because is deprecated in favor of .ruby-version and .ruby-gemset
+* 'expose' method now validates invalid single objects
+* `next` on kaminari with an empty result set should return the correct value.
+
+## Version 1.9.2
+
+* Support for Rails 4.1.0's changed Record Identifier class.
+
 ## Version 1.9.1
 
 * `encode_to_json` hook for internal refactoring.
